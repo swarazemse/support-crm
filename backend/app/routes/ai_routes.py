@@ -7,6 +7,8 @@ import json
 
 from app.database import SessionLocal
 from app import models
+from app.models import Ticket, TicketHistory
+from datetime import datetime, timedelta
 
 load_dotenv()
 
@@ -155,34 +157,30 @@ def ai_command(command: AICommand):
 
     if action in ["create_ticket", "create ticket"]:
 
-        latest_ticket = db.query(models.Ticket).order_by(
-            models.Ticket.id.desc()
-        ).first()
-
-        next_id = 1
-
-        if latest_ticket:
-            next_id = latest_ticket.id + 1
-
-        ticket_id = f"TKT-{next_id:03}"
-
-        new_ticket = models.Ticket(
-            ticket_id=ticket_id,
-            customer_name=data.get("customer_name"),
-            customer_email=data.get("customer_email"),
-            subject=data.get("subject"),
+       latest_ticket = db.query(models.Ticket).order_by( 
+           models.Ticket.id.desc() 
+           ).first() 
+       next_id = 1 
+       if latest_ticket: 
+        next_id = latest_ticket.id + 1 
+        ticket_id = f"TKT-{next_id:03}" 
+        new_ticket = models.Ticket( 
+            ticket_id=ticket_id, 
+            customer_name=data.get("customer_name"), 
+            customer_email=data.get("customer_email"), 
+            subject=data.get("subject"), 
             description=data.get("description"),
-            status="Open"
-        )
-
-        db.add(new_ticket)
-
-        db.commit()
-
-        return {
-            "message": f"Ticket {ticket_id} created successfully"
-        }
-
+              status="Open" ) 
+        db.add(new_ticket) 
+        db.commit() 
+        db.refresh(new_ticket) 
+        history = models.TicketHistory( 
+            ticket_id=ticket_id, 
+            notes="Ticket created via AI command", 
+            status="Open" ) 
+        db.add(history) 
+        db.commit() 
+        return { "message": f"Ticket {ticket_id} created successfully" }
     # =========================
     # SEARCH TICKETS
     # =========================
@@ -274,50 +272,62 @@ def ai_command(command: AICommand):
     # =========================
 
     elif action in [ "update_ticket", "update ticket" ]: 
-        ticket = db.query(models.Ticket).filter( 
-            models.Ticket.ticket_id == data.get("ticket_id") 
-        ).first() 
-        if not ticket: 
-            return { "message": "Ticket not found" } 
+       
+        ticket = db.query(models.Ticket).filter(
+             models.Ticket.ticket_id == data.get("ticket_id") 
+             ).first() 
+        if not ticket:
+             return {"message": "Ticket not found"} 
         status = data.get("status") 
         if status: 
             status = status.lower().strip() 
-            if "open" in status: status = "Open" 
-            elif "progress" in status: status = "In Progress" 
-            elif "close" in status: status = "Closed" 
-            ticket.status = status 
-            history = models.TicketHistory( 
-                ticket_id=ticket.ticket_id, 
-                status=ticket.status, 
-                notes=data.get("notes") 
-                ) 
-            db.add(history) 
-            db.commit() 
-            return { "message": f"{ticket.ticket_id} updated successfully" }
+            if "open" in status: 
+                status = "Open" 
+            elif "progress" in status: 
+                status = "In Progress" 
+            elif "close" in status: 
+                status = "Closed" 
+        ticket.status = status 
+        db.commit() 
+        history = models.TicketHistory( 
+            ticket_id=ticket.ticket_id, 
+            notes=data.get("notes", "Updated via AI"), 
+            status=ticket.status 
+        ) 
+        db.add(history) 
+        db.commit() 
+        return { 
+            "message": f"{ticket.ticket_id} updated successfully" 
+        } 
+
 
     # =========================
     # CLOSE TICKET
     # =========================
 
     elif action in ["close_ticket", "close ticket"]:
+    
+        ticket_id = data.get("ticket_id")
+        ticket = db.query(models.Ticket).filter( 
+             models.Ticket.ticket_id == ticket_id 
+        ).first() 
+        if not ticket: 
+            return {"message": "Ticket not found"} 
+        ticket.status = "Closed" 
+        db.commit() 
+        history = models.TicketHistory( 
+            ticket_id=ticket.ticket_id, 
+            notes="Ticket closed via AI command", 
+            status="Closed" ) 
+        db.add(history) 
+        db.commit() 
+    return { 
+        "message": f"{ticket.ticket_id} closed successfully" 
+    }
+        
+        
 
-        ticket = db.query(models.Ticket).filter(
-            models.Ticket.ticket_id == data.get("ticket_id")
-        ).first()
 
-        if not ticket:
-
-            return {
-                "message": "Ticket not found"
-            }
-
-        ticket.status = "Closed"
-
-        db.commit()
-
-        return {
-            "message": f"{ticket.ticket_id} closed successfully"
-        }
 
     # =========================
     # DEFAULT
