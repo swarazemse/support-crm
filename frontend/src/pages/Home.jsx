@@ -10,6 +10,181 @@ function Home() {
 
   const [status, setStatus] = useState("");
 
+  const [aiCommand, setAiCommand] = useState("");
+
+const [aiResponse, setAiResponse] = useState("");
+
+const [loadingAI, setLoadingAI] = useState(false);
+
+const startVoiceCommand = () => {
+
+  const recognition =
+    new window.webkitSpeechRecognition();
+
+  recognition.lang = "en-US";
+
+  recognition.start();
+
+  recognition.onresult = async (event) => {
+
+    const transcript =
+      event.results[0][0].transcript;
+
+    setAiCommand(transcript);
+
+    try {
+
+      setLoadingAI(true);
+
+      const response = await API.post(
+        "/ai/ai-command",
+        {
+          message: transcript
+        }
+      );
+
+      if (response.data.message) {
+
+  setAiResponse(response.data.message);
+
+} else if (response.data.tickets) {
+
+  if (response.data.tickets.length === 0) {
+
+    setAiResponse("No tickets found");
+
+  } else {
+
+    const formattedTickets =
+      response.data.tickets
+        .map(
+          (ticket) =>
+            `${ticket.ticket_id} | ${ticket.customer_name} | ${ticket.customer_email} | ${ticket.subject} | ${ticket.status}`
+        )
+        .join("\n");
+
+    setAiResponse(formattedTickets);
+  }
+}
+
+      fetchTickets();
+
+    } catch (error) {
+
+      console.error(error);
+
+      setAiResponse("Voice AI command failed");
+
+    } finally {
+
+      setLoadingAI(false);
+
+    }
+  };
+};
+
+const handleAICommand = async () => {
+
+  if (!aiCommand) return;
+
+  try {
+
+    setLoadingAI(true);
+
+    const response = await API.post(
+      "/ai/ai-command",
+      {
+        message: aiCommand
+      }
+    );
+
+    if (response.data.message) {
+
+  if (response.data.message) {
+
+  if (response.data.message) {
+
+  setAiResponse(response.data.message);
+
+} else if (response.data.tickets) {
+
+  if (response.data.tickets.length === 0) {
+
+    setAiResponse("No tickets found");
+
+  } else {
+
+    const formattedTickets =
+      response.data.tickets
+        .map(
+          (ticket) =>
+            `${ticket.ticket_id} | ${ticket.customer_name} | ${ticket.customer_email} | ${ticket.subject} | ${ticket.status}`
+        )
+        .join("\n");
+
+    setAiResponse(formattedTickets);
+  }
+}
+
+} else if (response.data.tickets) {
+
+  if (response.data.tickets.length === 0) {
+
+    setAiResponse("No tickets found");
+
+  } else {
+
+    const formattedTickets =
+      response.data.tickets
+        .map(
+          (ticket) =>
+            `${ticket.ticket_id} | ${ticket.customer_name} | ${ticket.customer_email} | ${ticket.subject} | ${ticket.status}`
+        )
+        .join("\n");
+
+    setAiResponse(formattedTickets);
+  }
+}
+
+} else if (response.data.tickets) {
+
+  if (response.data.tickets.length === 0) {
+
+    setAiResponse("No tickets found");
+
+  } else {
+
+    const formattedTickets =
+      response.data.tickets
+        .map(
+          (ticket) =>
+            `${ticket.ticket_id} | ${ticket.customer_name}| ${ticket.customer_email} | ${ticket.subject} | ${ticket.status}`
+        )
+        .join("\n");
+
+    setAiResponse(formattedTickets);
+  }
+}
+
+    setAiCommand("");
+
+    fetchTickets();
+
+  } catch (error) {
+
+    console.error(error);
+
+    setAiResponse("AI command failed");
+
+  } finally {
+
+    setLoadingAI(false);
+
+  }
+};
+
+
+
   const fetchTickets = async () => {
 
     try {
@@ -99,6 +274,88 @@ function Home() {
         </div>
       </div>
 
+{/* AI Assistant */}
+
+<div className="
+  bg-white
+  p-6
+  rounded-xl
+  shadow
+  mb-6
+">
+
+  <h2 className="
+    text-2xl
+    font-bold
+    mb-4
+  ">
+    AI CRM Assistant
+  </h2>
+
+  <div className="flex gap-3">
+
+    <input
+      type="text"
+      placeholder="Type AI command..."
+      value={aiCommand}
+      onChange={(e) =>
+        setAiCommand(e.target.value)
+      }
+      className="
+        border
+        p-3
+        rounded-lg
+        w-full
+      "
+    />
+<button
+  onClick={startVoiceCommand}
+  className="
+    bg-green-600
+    text-white
+    px-5
+    rounded-lg
+    hover:bg-green-700
+  "
+>
+  🎤
+</button>
+    <button
+      onClick={handleAICommand}
+      className="
+        bg-purple-600
+        text-white
+        px-6
+        rounded-lg
+        hover:bg-purple-700
+      "
+    >
+      {loadingAI ? "Thinking..." : "Ask AI"}
+    </button>
+
+  </div>
+
+  {aiResponse && (
+
+    <div className="
+      mt-4
+      bg-gray-100
+      p-4
+      rounded-lg
+    ">
+
+     <pre className="
+      whitespace-pre-wrap
+      font-medium
+    ">
+      {aiResponse}
+    </pre>
+
+    </div>
+
+  )}
+
+</div>
       {/* Search + Filter */}
 
       <div className="flex gap-4 mb-6">

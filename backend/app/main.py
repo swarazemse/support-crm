@@ -7,6 +7,7 @@ from .routes import tickets
 from .routes import auth
 from .models import User
 from .database import SessionLocal
+from app.routes import ai_routes
 
 app = FastAPI()
 @app.on_event("startup")
@@ -53,6 +54,11 @@ app.include_router(
 app.include_router(
     auth.router,
     prefix="/api/auth"
+)
+
+app.include_router(
+    ai_routes.router,
+    prefix="/api/ai"
 )
 
 @app.get("/")
