@@ -231,21 +231,21 @@ const handleAICommand = async () => {
 
   return (
 
-    <div className="p-10 bg-gray-50 min-h-screen">
+   
+    <div className="p-4 md:p-10 bg-gray-50 min-h-screen">
 
-     <div className="flex items-center justify-between mb-6 w-full">
+      <div className=" flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 w-full ">
 
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-2xl md:text-4xl font-bold">
           Support CRM Dashboard
         </h1>
-        <div className="flex items-center gap-2 ml-auto">
+        <div className=" flex flex-wrap gap-2 w-full md:w-auto ">
         <Link
           to="/create"
           className="
             bg-blue-600
             text-white
-            px-5
-            py-3
+            px-4 py-2 md:px-5 md:py-3
             rounded-lg
             hover:bg-blue-700
           "
@@ -263,8 +263,7 @@ const handleAICommand = async () => {
               className="
               bg-red-600
               text-white
-              px-5
-              py-3
+              px-4 py-2 md:px-5 md:py-3
               rounded-lg
               hover:bg-red-700
             "
@@ -292,7 +291,8 @@ const handleAICommand = async () => {
     AI CRM Assistant
   </h2>
 
-  <div className="flex gap-3">
+  
+  <div className=" flex flex-col md:flex-row gap-3 ">
 
     <input
       type="text"
@@ -313,7 +313,7 @@ const handleAICommand = async () => {
   className="
     bg-green-600
     text-white
-    px-5
+    px-4 py-2 md:px-5 md:py-3
     rounded-lg
     hover:bg-green-700
   "
@@ -358,7 +358,7 @@ const handleAICommand = async () => {
 </div>
       {/* Search + Filter */}
 
-      <div className="flex gap-4 mb-6">
+      <div className=" flex flex-col md:flex-row gap-4 mb-6 ">
 
         <input
           type="text"
@@ -407,9 +407,9 @@ const handleAICommand = async () => {
 
       {/* Ticket Table */}
 
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className=" bg-white shadow rounded-lg overflow-x-auto ">
 
-        <table className="w-full">
+        <table className="min-w-full">
 
           <thead className="bg-gray-100">
 
