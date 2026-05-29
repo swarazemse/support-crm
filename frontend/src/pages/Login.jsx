@@ -47,12 +47,14 @@ function Login() {
       navigate("/");
 
     } catch (error) {
+       console.log(error);
 
-      setError(
-        error.response?.data?.detail ||
-        "Login failed"
-      );
-    }
+        if (!error.response) {
+          setError("Server is waking up. Please try again in 10 seconds.");
+        } else {
+          setError("Invalid credentials");
+        }
+      }
   };
 
   return (

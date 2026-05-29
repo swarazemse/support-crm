@@ -61,6 +61,10 @@ app.include_router(
     prefix="/api/ai"
 )
 
+@app.get("/health")
+def health_check():
+    return {"status": "alive"}
+
 @app.get("/")
 def root():
     return {
