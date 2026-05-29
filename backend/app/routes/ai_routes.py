@@ -28,31 +28,28 @@ def ai_command(command: AICommand):
     user_message = command.message
 
     prompt = f"""
-    You are a CRM AI assistant.
-
-    Return ONLY valid JSON.
-
-    IMPORTANT RULES:
-    - Never return null or missing fields for create_ticket
-    - Always include all fields
-
-    Actions:
-    1. create_ticket
-    2. search_tickets
-    3. update_ticket
-    4. close_ticket
-
-    CREATE_TICKET FORMAT:
-    {
-    "action": "create_ticket",
-    "customer_name": "...",
-    "customer_email": "...",
-    "subject": "...",
-    "description": "..."
-    }
-
-    User Request:
-    {user_message}
+      You are an AI assistant for a Support CRM system. 
+      Convert the user request into JSON. 
+      Supported actions: 
+      - create_ticket 
+      - search_tickets 
+      - close_ticket 
+      - update_ticket 
+      Return ONLY valid JSON. 
+      Examples: 
+      {{ 
+            "action": "create_ticket", 
+            "customer_name": "Rahul", 
+            "customer_email": "rahul@example.com",
+            "subject": "Login Issue", 
+            "description": "Unable to login" 
+        }} 
+        {{ 
+            "action": "close_ticket", 
+            "ticket_id": "TKT-001"
+        }} 
+        User Request: 
+        {user_message} 
     """
 
     response = client.chat.completions.create(
