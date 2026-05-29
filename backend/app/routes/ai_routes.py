@@ -28,17 +28,28 @@ def ai_command(command: AICommand):
     user_message = command.message
 
     prompt = f"""
-    You are an AI assistant for a Support CRM system.
-
-    Convert the user request into JSON.
-
-    Supported actions:
-    - create_ticket
-    - search_tickets
-    - close_ticket
-    - update_ticket
+    You are a CRM AI assistant.
 
     Return ONLY valid JSON.
+
+    IMPORTANT RULES:
+    - Never return null or missing fields for create_ticket
+    - Always include all fields
+
+    Actions:
+    1. create_ticket
+    2. search_tickets
+    3. update_ticket
+    4. close_ticket
+
+    CREATE_TICKET FORMAT:
+    {
+    "action": "create_ticket",
+    "customer_name": "...",
+    "customer_email": "...",
+    "subject": "...",
+    "description": "..."
+    }
 
     User Request:
     {user_message}
@@ -68,6 +79,13 @@ def ai_command(command: AICommand):
     # CREATE TICKET
     # =========================
     if action in ["create_ticket", "create ticket"]:
+        required_fields = ["customer_name", "customer_email", "subject", "description"]
+
+        for field in required_fields:
+            if not data.get(field):
+                return {
+                    "message": f"Missing field: {field}. Please try again."
+                }
 
         latest_ticket = db.query(models.Ticket).order_by(
             models.Ticket.id.desc()
@@ -81,10 +99,10 @@ def ai_command(command: AICommand):
 
         new_ticket = models.Ticket(
             ticket_id=ticket_id,
-            customer_name=data.get("customer_name"),
-            customer_email=data.get("customer_email"),
-            subject=data.get("subject"),
-            description=data.get("description"),
+            customer_name=data.get("customer_name", "").strip(),
+            customer_email=data.get("customer_email", "").strip(),
+            subject=data.get("subject", "").strip(),
+            description=data.get("description", "").strip(),
             status="Open"
         )
 
