@@ -207,14 +207,14 @@ def ai_command(command: AICommand):
 
             ticket.status = status
 
-        if not data.get("notes"):
-            data["notes"] = user_message  # fallback to raw input
+        
+        notes = data.get("notes") or user_message
 
         db.commit()
 
         history = models.TicketHistory(
             ticket_id=ticket.ticket_id,
-            notes = data.get("notes") or user_message,
+            notes = notes,
             status=ticket.status
         )
 
