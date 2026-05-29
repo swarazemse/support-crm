@@ -43,11 +43,22 @@ def ai_command(command: AICommand):
             "customer_email": "rahul@example.com",
             "subject": "Login Issue", 
             "description": "Unable to login" 
-        }} 
+    }} 
         {{ 
             "action": "close_ticket", 
             "ticket_id": "TKT-001"
         }} 
+        IMPORTANT FOR UPDATE_TICKET:
+
+        You MUST always include "notes" field.
+
+        Example:
+        {{
+            "action": "update_ticket",
+            "ticket_id": "TKT-001",
+            "status": "In Progress",
+            "notes": "User's explanation of update"
+        }}
         User Request: 
         {user_message} 
     """
@@ -196,11 +207,14 @@ def ai_command(command: AICommand):
 
             ticket.status = status
 
+        if not data.get("notes"):
+            data["notes"] = user_message  # fallback to raw input
+
         db.commit()
 
         history = models.TicketHistory(
             ticket_id=ticket.ticket_id,
-            notes=data.get("notes", f"Status updated to {ticket.status}"),
+            notes = data.get("notes") or user_message,
             status=ticket.status
         )
 
