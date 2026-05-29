@@ -200,7 +200,7 @@ def ai_command(command: AICommand):
 
         history = models.TicketHistory(
             ticket_id=ticket.ticket_id,
-            notes=data.get("notes", "").strip() or "Ticket updated",
+            notes=data.get("notes", f"Status updated to {ticket.status}"),
             status=ticket.status
         )
 
@@ -226,7 +226,7 @@ def ai_command(command: AICommand):
 
         history = models.TicketHistory(
             ticket_id=ticket.ticket_id,
-            notes=data.get("notes", "").strip() or "Ticket closed",
+            notes=data.get("notes", f"Status updated to {ticket.status}"),
             status="Closed"
         )
 
