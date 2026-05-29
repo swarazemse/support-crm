@@ -108,7 +108,7 @@ def ai_command(command: AICommand):
 
         history = models.TicketHistory(
             ticket_id=ticket_id,
-            notes="Ticket created via AI",
+            notes=data.get("description", "").strip(),
             status="Open"
         )
 
@@ -200,7 +200,7 @@ def ai_command(command: AICommand):
 
         history = models.TicketHistory(
             ticket_id=ticket.ticket_id,
-            notes=data.get("notes", "Updated via AI"),
+            notes=ticket.notes,
             status=ticket.status
         )
 
@@ -226,7 +226,7 @@ def ai_command(command: AICommand):
 
         history = models.TicketHistory(
             ticket_id=ticket.ticket_id,
-            notes="Ticket closed via AI",
+            notes=ticket.notes,
             status="Closed"
         )
 
