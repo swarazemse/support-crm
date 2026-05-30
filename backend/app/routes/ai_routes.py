@@ -59,15 +59,7 @@ def ai_command(command: AICommand):
             "status": "In Progress",
             "notes": "User's explanation of update"
         }}
-        If user asks to "show closed tickets", "list closed tickets", "closed ticket", 
-        ALWAYS use:
-
-        {{
-        "action": "search_tickets",
-        "status": "Closed"
-        }}
-
-        NEVER use close_ticket for these queries.
+        
         User Request: 
         {user_message} 
     """
