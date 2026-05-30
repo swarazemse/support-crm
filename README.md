@@ -47,6 +47,10 @@ An AI-driven full-stack Customer Support Ticketing CRM that automates ticket cre
 Frontend:  
 https://support-crm-nine.vercel.app
 
+credentials:
+username: admin
+password: admin123
+
 Backend API:  
 https://support-crn-backend-production.up.railway.app/docs
 
@@ -107,6 +111,3 @@ npm run dev
 ## Author
 
 Developed by Swara Zemse
-
-```
-```
