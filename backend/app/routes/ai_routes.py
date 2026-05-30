@@ -59,7 +59,7 @@ def ai_command(command: AICommand):
             "status": "In Progress",
             "notes": "User's explanation of update"
         }}
-        
+         
         User Request: 
         {user_message} 
     """
